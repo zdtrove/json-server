@@ -1,9 +1,14 @@
 {
-    "main": "api/server.js",
-    "scripts": {
-      "start": "node api/server.js"
-    },
-    "devDependencies": {
-      "json-server": "^0.17.4"
-    }
+  "main": "api/server.js",
+  "scripts": {
+    "start": "node api/server.js",
+    "dev": "nodemon api/server.js"
+  },
+  "devDependencies": {
+    "json-server": "^0.17.4",
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "cors": "^2.8.5"
   }
+}
