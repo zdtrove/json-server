@@ -1,33 +1,33 @@
-// See https://github.com/typicode/json-server#module
-const jsonServer = require('json-server')
+const jsonServer = require('json-server');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
-const server = jsonServer.create()
+const server = jsonServer.create();
 
-// Uncomment to allow write operations
-// const fs = require('fs')
-// const path = require('path')
-// const filePath = path.join('db.json')
-// const data = fs.readFileSync(filePath, "utf-8");
-// const db = JSON.parse(data);
-// const router = jsonServer.router(db)
+const dbPath = path.join(os.tmpdir(), 'db.json');
 
-// Comment out to allow write operations
-const router = jsonServer.router('db.json')
+const originalDbPath = path.join(__dirname, '..', 'db.json');
+if (!fs.existsSync(dbPath)) {
+    fs.copyFileSync(originalDbPath, dbPath);
+}
 
-const middlewares = jsonServer.defaults()
+const router = jsonServer.router(dbPath);
+const middlewares = jsonServer.defaults();
 
 server.use(cors());
-server.use(middlewares)
-// Add this before server.use(router)
-server.use(jsonServer.rewriter({
-    '/api/*': '/$1',
-    '/blog/:resource/:id/show': '/:resource/:id'
-}))
-server.use(router)
-server.listen(8080, () => {
-    console.log('JSON Server is running')
-})
+server.use(middlewares);
+server.use(
+    jsonServer.rewriter({
+        '/api/*': '/$1',
+        '/blog/:resource/:id/show': '/:resource/:id',
+    })
+);
+server.use(router);
 
-// Export the Server API
-module.exports = server
+server.listen(8080, () => {
+    console.log('JSON Server is running');
+});
+
+module.exports = server;
